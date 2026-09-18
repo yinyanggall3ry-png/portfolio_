@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yin Yang Gallery — Tumeleng Shiri</title>
+  <meta name="description" content="Yin Yang Gallery — a visual studio by Tumeleng Shiri." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>
+    :root{
+      --paper:#f7f7f4; --ink:#151515; --muted:#777; --line:#d9d9d4;
+      --glass:rgba(255,255,255,.58); --shadow:0 18px 55px rgba(0,0,0,.12);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--paper);color:var(--ink);font-family:"DM Sans",sans-serif;overflow-x:hidden}
+    a{color:inherit;text-decoration:none}
+    button,input,textarea,select{font:inherit}
+    .grain{position:fixed;inset:0;pointer-events:none;opacity:.055;z-index:50;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E")}
+    .nav{
+      position:fixed;left:22px;top:22px;bottom:22px;width:82px;z-index:40;
+      border:1px solid rgba(255,255,255,.72);background:var(--glass);
+      backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+      border-radius:28px;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;
+      padding:20px 10px;
+    }
+    .mark{font-family:"Space Grotesk";font-weight:700;font-size:18px;letter-spacing:-.08em;margin-bottom:auto}
+    .navlinks{display:flex;flex-direction:column;gap:12px;align-items:center}
+    .navlinks a{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;font-size:10px;letter-spacing:.08em;text-transform:uppercase;transition:.3s}
+    .navlinks a:hover,.navlinks a.active{background:#151515;color:white;transform:translateY(-3px)}
+    .social{margin-top:auto;font-size:11px;writing-mode:vertical-rl;letter-spacing:.12em;color:#777}
+    main{margin-left:126px}
+    section{min-height:100vh;padding:8vh 7vw}
+    .hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding-top:5vh}
+    .hero h1{font-family:"Space Grotesk";font-size:clamp(5rem,14vw,13rem);line-height:.78;letter-spacing:-.095em;margin:0;position:relative;z-index:2}
+    .hero h1 span{display:block}
+    .hero h1 .indent{margin-left:11vw}
+    .hero-meta{position:absolute;right:8vw;bottom:12vh;max-width:280px;font-size:13px;line-height:1.6;color:#555;z-index:3}
+    .hero-image{position:absolute;right:7vw;top:15%;width:min(34vw,470px);height:min(68vh,650px);object-fit:cover;border-radius:32px;filter:grayscale(100%);box-shadow:0 30px 80px rgba(0,0,0,.2);transform:rotate(4deg);animation:float 7s ease-in-out infinite}
+    .orbit{position:absolute;left:25%;top:17%;width:95px;height:95px;border:1px solid #bbb;border-radius:50%;animation:spin 16s linear infinite}
+    .orbit:after{content:"";position:absolute;width:10px;height:10px;border-radius:50%;background:#151515;top:-5px;left:42px}
+    .scroll{position:absolute;left:1vw;bottom:8vh;writing-mode:vertical-rl;font-size:10px;letter-spacing:.2em;color:#888}
+    .eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#777;margin-bottom:22px}
+    h2{font-family:"Space Grotesk";font-size:clamp(3.5rem,8vw,8rem);letter-spacing:-.08em;line-height:.82;margin:0 0 50px}
+    .intro{font-size:clamp(1.2rem,2.2vw,2rem);max-width:800px;line-height:1.25;letter-spacing:-.03em}
+    .about-grid{display:grid;grid-template-columns:1.1fr .8fr;gap:8vw;align-items:center}
+    .about-images{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .about-images img{width:100%;height:290px;object-fit:cover;border-radius:28px;filter:grayscale(100%);transition:.5s}
+    .about-images img:first-child{transform:translateY(55px)}
+    .about-images img:hover{filter:grayscale(0%);transform:scale(1.03)}
+    .work-head{display:flex;justify-content:space-between;align-items:end;gap:30px}
+    .filters{display:flex;gap:8px;flex-wrap:wrap}
+    .filter{border:1px solid var(--line);background:transparent;border-radius:999px;padding:10px 16px;cursor:pointer;transition:.25s}
+    .filter.active,.filter:hover{background:#151515;color:white}
+    .gallery{columns:3 260px;column-gap:18px}
+    .card{break-inside:avoid;margin:0 0 18px;position:relative;overflow:hidden;border-radius:24px;background:#ddd;cursor:pointer}
+    .card img{display:block;width:100%;height:auto;transition:transform .7s,filter .5s}
+    .card:hover img{transform:scale(1.06);filter:contrast(1.06)}
+    .card .label{position:absolute;left:15px;bottom:15px;background:rgba(255,255,255,.78);backdrop-filter:blur(10px);padding:8px 11px;border-radius:12px;font-size:10px;text-transform:uppercase;letter-spacing:.1em}
+    .vision{background:#151515;color:#f7f7f4;position:relative;overflow:hidden}
+    .vision h2{font-size:clamp(5rem,12vw,12rem)}
+    .vision-copy{max-width:700px;font-size:clamp(1.3rem,2.4vw,2.3rem);line-height:1.15}
+    .marquee{position:absolute;bottom:7vh;left:-5%;width:110%;white-space:nowrap;font-family:"Space Grotesk";font-size:12vw;font-weight:700;letter-spacing:-.08em;opacity:.08;animation:marquee 20s linear infinite}
+    .booking{display:grid;grid-template-columns:.8fr 1.2fr;gap:8vw}
+    .booking-note{font-size:clamp(2rem,4vw,4rem);font-family:"Space Grotesk";letter-spacing:-.06em;line-height:.95}
+    form{display:grid;gap:14px}
+    input,textarea,select{width:100%;border:1px solid var(--line);background:white;border-radius:16px;padding:17px;outline:none}
+    input:focus,textarea:focus,select:focus{border-color:#111}
+    textarea{min-height:160px;resize:vertical}
+    .submit{border:0;background:#151515;color:white;border-radius:16px;padding:17px 22px;cursor:pointer;transition:.25s}
+    .submit:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.16)}
+    footer{padding:30px 7vw 50px;margin-left:126px;display:flex;justify-content:space-between;color:#777;font-size:12px}
+    .toast{position:fixed;right:28px;bottom:28px;background:#151515;color:white;padding:15px 18px;border-radius:15px;transform:translateY(120px);transition:.4s;z-index:100}
+    .toast.show{transform:translateY(0)}
+    .cursor{position:fixed;width:18px;height:18px;border:1px solid #111;border-radius:50%;pointer-events:none;z-index:60;transform:translate(-50%,-50%);mix-blend-mode:difference;transition:width .2s,height .2s}
+    @keyframes float{0%,100%{transform:rotate(4deg) translateY(0)}50%{transform:rotate(1deg) translateY(-18px)}}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes marquee{to{transform:translateX(-35%)}}
+    @media(max-width:850px){
+      .nav{left:10px;right:10px;bottom:auto;width:auto;height:66px;flex-direction:row;padding:8px 12px;border-radius:20px}
+      .mark{margin:0 auto 0 6px}.navlinks{flex-direction:row;gap:2px}.navlinks a{width:49px;height:49px;font-size:8px}.social{display:none}
+      main,footer{margin-left:0} section{padding:115px 7vw 70px;min-height:auto}.hero{min-height:100vh;padding-top:80px}
+      .hero h1{font-size:20vw}.hero h1 .indent{margin-left:0}.hero-image{width:45vw;height:45vh;right:4vw;top:30%;opacity:.75}.hero-meta{left:7vw;right:auto;bottom:7vh}
+      .about-grid,.booking{grid-template-columns:1fr}.about-images img{height:230px}.gallery{columns:2 150px}
+      footer{padding:30px 7vw}
+    }
+  </style>
+</head>
+<body>
+<div class="grain"></div><div class="cursor" id="cursor"></div>
+
+<nav class="nav">
+  <a class="mark" href="#home">Y/Y</a>
+  <div class="navlinks">
+    <a href="#home" data-section="home">Home</a>
+    <a href="#about" data-section="about">About</a>
+    <a href="#work" data-section="work">Work</a>
+    <a href="#vision" data-section="vision">Vision</a>
+    <a href="#bookings" data-section="bookings">Book</a>
+  </div>
+  <div class="social">TUMELENG SHIRI · PHOTOGRAPHER</div>
+</nav>
+
+<main>
+<section class="hero" id="home">
+  <div class="orbit"></div>
+  <div>
+    <div class="eyebrow">Yin Yang Gallery / Visual Studio</div>
+    <h1><span>LIGHT</span><span class="indent">MEETS</span><span>STILLNESS.</span></h1>
+  </div>
+  <img class="hero-image parallax" src="assets/yin.jpeg" alt="Portrait photography">
+  <p class="hero-meta">A photography practice by <strong>Tumeleng Shiri</strong> — portraits, fashion, stories and visual worlds built between opposing energies.</p>
+  <div class="scroll">SCROLL TO EXPLORE ↓</div>
+</section>
+
+<section id="about">
+  <div class="eyebrow">01 / About</div>
+  <div class="about-grid">
+    <div>
+      <h2>THE SPACE<br>BETWEEN.</h2>
+      <p class="intro">Yin Yang Gallery is a Johannesburg-born visual studio founded by photographer <strong>Tumeleng Shiri</strong>. We chase the tension between soft and sharp, quiet and loud, raw and refined.</p>
+      <p style="color:#777;max-width:600px;line-height:1.7">Every frame is treated as a small universe: intentional composition, honest emotion and a little bit of play. The result is imagery that feels editorial without losing its human pulse.</p>
+    </div>
+    <div class="about-images">
+      <img src="assets/yan.jpeg" alt="Portrait">
+      <img src="assets/fashion.jpeg" alt="Fashion">
+      <img src="assets/wow.jpeg" alt="Editorial">
+      <img src="assets/ster.jpeg" alt="Studio portrait">
+    </div>
+  </div>
+</section>
+
+<section id="work">
+  <div class="work-head">
+    <div><div class="eyebrow">02 / Selected work</div><h2>THE<br>ARCHIVE.</h2></div>
+    <div class="filters">
+      <button class="filter active" data-filter="all">All</button>
+      <button class="filter" data-filter="portrait">Portraits</button>
+      <button class="filter" data-filter="fashion">Fashion</button>
+      <button class="filter" data-filter="editorial">Editorial</button>
+    </div>
+  </div>
+  <div class="gallery" id="gallery">
+    <figure class="card" data-cat="portrait"><img src="assets/potrait.jpeg"><figcaption class="label">Portrait / 01</figcaption></figure>
+    <figure class="card" data-cat="fashion"><img src="assets/salva.jpeg"><figcaption class="label">Fashion / 01</figcaption></figure>
+    <figure class="card" data-cat="editorial"><img src="assets/wright.jpeg"><figcaption class="label">Editorial / 01</figcaption></figure>
+    <figure class="card" data-cat="portrait"><img src="assets/scene.jpeg"><figcaption class="label">Portrait / 02</figcaption></figure>
+    <figure class="card" data-cat="fashion"><img src="assets/letti.jpeg"><figcaption class="label">Fashion / 02</figcaption></figure>
+    <figure class="card" data-cat="editorial"><img src="assets/yes.jpeg"><figcaption class="label">Editorial / 02</figcaption></figure>
+    <figure class="card" data-cat="portrait"><img src="assets/wrightt.jpeg"><figcaption class="label">Portrait / 03</figcaption></figure>
+    <figure class="card" data-cat="fashion"><img src="assets/fashionn.jpeg"><figcaption class="label">Fashion / 03</figcaption></figure>
+    <figure class="card" data-cat="editorial"><img src="assets/scenee.jpeg"><figcaption class="label">Editorial / 03</figcaption></figure>
+  </div>
+</section>
+
+<section class="vision" id="vision">
+  <div class="eyebrow">03 / Vision</div>
+  <h2>MAKE<br>THE ORDINARY<br>STRANGE.</h2>
+  <p class="vision-copy">We believe photography should do more than document. It should shift the room. Make you look twice. Leave a trace.</p>
+  <div class="marquee">YIN YANG · LIGHT / SHADOW · FORM / FEELING · YIN YANG · LIGHT / SHADOW · FORM / FEELING ·</div>
+</section>
+
+<section id="bookings">
+  <div class="eyebrow">04 / Bookings</div>
+  <div class="booking">
+    <div>
+      <div class="booking-note">LET'S MAKE<br>SOMETHING<br>WORTH<br>LOOKING AT.</div>
+      <p style="color:#777;line-height:1.7;max-width:430px;margin-top:35px">Tell us what you're imagining. Portraits, campaigns, editorials, events or a concept that doesn't fit neatly into a box.</p>
+    </div>
+    <form id="bookingForm">
+      <input required name="name" placeholder="Your name">
+      <input required type="email" name="email" placeholder="Your email">
+      <select name="service">
+        <option>Portrait session</option><option>Fashion / Editorial</option><option>Campaign / Brand</option><option>Event</option><option>Other</option>
+      </select>
+      <input name="date" type="date">    
+      <textarea required name="message" placeholder="Tell Tumeleng about the shoot..."></textarea>
+      <button class="submit" type="submit">Send booking enquiry ↗</button>
+      <small style="color:#888">.</small>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer><span>© 2026 YIN YANG GALLERY</span><span>TUMELENG SHIRI — VISUAL ARTIST</span></footer>
+<div class="toast" id="toast">Booking enquiry sent.</div>
+
+<script>
+  // Gallery filters
+  document.querySelectorAll('.filter').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.filter').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter=btn.dataset.filter;
+      document.querySelectorAll('.card').forEach(card=>{
+        card.style.display=(filter==='all'||card.dataset.cat===filter)?'block':'none';
+      });
+    });
+  });
+
+  // Smooth parallax hero image
+  const heroImg=document.querySelector('.parallax');
+  window.addEventListener('scroll',()=>{
+    const y=window.scrollY;
+    if(heroImg) heroImg.style.translate=`0 ${Math.min(y*.08,45)}px`;
+  },{passive:true});
+
+  // Active navigation
+  const sections=[...document.querySelectorAll('section[id]')];
+  const links=[...document.querySelectorAll('.navlinks a')];
+  const observer=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        links.forEach(l=>l.classList.toggle('active',l.dataset.section===entry.target.id));
+      }
+    });
+  },{rootMargin:'-40% 0px -50% 0px'});
+  sections.forEach(s=>observer.observe(s));
+
+  // Custom cursor
+  const cursor=document.getElementById('cursor');
+  window.addEventListener('pointermove',e=>{
+    cursor.style.left=e.clientX+'px';cursor.style.top=e.clientY+'px';
+  });
+  document.querySelectorAll('a,button,.card,input,textarea,select').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{cursor.style.width='34px';cursor.style.height='34px'});
+    el.addEventListener('mouseleave',()=>{cursor.style.width='18px';cursor.style.height='18px'});
+  });
+
+  // Booking email
+  // ===============================
+// EMAILJS SETUP
+// ===============================
+
+
+emailjs.init({
+    publicKey: "CqXr_01RYr7McteX_"
+});
+
+
+document.getElementById('bookingForm').addEventListener('submit', function(event) {
+
+    event.preventDefault();
+
+    const form = this;
+    const button = form.querySelector('.submit');
+    const toast = document.getElementById('toast');
+
+    button.disabled = true;
+    button.textContent = 'Sending...';
+
+    emailjs.sendForm(
+        'service_4q4cfln',
+        'template_oecw4dl',
+        form
+    )
+
+    .then(function(response) {
+
+        console.log('EMAIL SENT:', response);
+
+        form.reset();
+
+        button.disabled = false;
+        button.textContent = 'Send booking enquiry ↗';
+
+        toast.textContent = 'Enquiry sent to Tumeleng ✦';
+        toast.classList.add('show');
+
+        setTimeout(function() {
+            toast.classList.remove('show');
+        }, 3500);
+
+    })
+
+    .catch(function(error) {
+
+        console.error('EMAILJS ERROR:', error);
+
+        button.disabled = false;
+        button.textContent = 'Send booking enquiry ↗';
+
+        toast.textContent = 'Email failed: ' + (error.text || 'Please try again.');
+
+        toast.classList.add('show');
+
+        setTimeout(function() {
+            toast.classList.remove('show');
+        }, 5000);
+
+    });
+
+});
+</script>
+
+</body>
+</html>
